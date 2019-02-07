@@ -1,7 +1,9 @@
 defmodule BlackFridayTest do
   use ExUnit.Case, async: false
-  alias BlackFriday.Product, as: P
   doctest BlackFriday
+
+  alias BlackFriday.Product, as: P
+  import BlackFriday.FancyScan
 
   setup do
     {:ok, pid1} = BlackFriday.Cashier.checkout!()
@@ -34,7 +36,7 @@ defmodule BlackFridayTest do
   end
 
   test "Test Cart (self-destroying)", context do
-    assert %BlackFriday.Order{items: [], total: Money.zero(:GBP)} ==
+    assert %BlackFriday.Order{owner: context[:pid1], items: [], total: Money.zero(:GBP)} ==
              BlackFriday.Checkout.total(context[:pid1])
 
     one_tea_price = Money.new(:GBP, "3.11")
@@ -71,6 +73,19 @@ defmodule BlackFridayTest do
 
     Process.sleep(100)
     refute Process.alive?(context[:pid1])
+  end
+
+  test "Fancy Scan", _context do
+    {:ok, order} = BlackFriday.Order.new()
+    three_tea_price = Money.new(:GBP, "6.22")
+
+    bucket =
+      order
+      <<~ BlackFriday.Product.find("GR1")
+      <<~ BlackFriday.Product.find("GR1")
+      <<~ BlackFriday.Product.find("GR1")
+
+    assert ^three_tea_price = BlackFriday.Checkout.checkout(bucket.owner).total
   end
 
   test "Test Several Carts (concurrent)", _context do
