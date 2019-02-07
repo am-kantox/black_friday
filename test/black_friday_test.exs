@@ -95,8 +95,8 @@ defmodule BlackFridayTest do
     total =
       order
       <<~ BlackFriday.Product.find("GR1")
-      <<~ BlackFriday.Product.find("GR1")
-      <<~ BlackFriday.Product.find("GR1")
+      <<~ "GR1"
+      <<~ "GR1"
       ~>> :checkout
 
     assert three_tea_price == total
