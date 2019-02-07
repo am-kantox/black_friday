@@ -1,5 +1,26 @@
 # BlackFriday
 
+---
+
+## Usage
+
+```elixir
+total =
+  with {:ok, order} = BlackFriday.Order.new() do
+    order
+    <<~ BlackFriday.Product.find("GR1")
+    <<~ "GR1"
+    <<~ "GR1"
+    ~>> :checkout
+  end
+
+assert Money.new(:GBP, "6.22") == total
+```
+
+---
+
+## Task Description
+
 You are the lead programmer for a small chain of supermarkets. You are required to make a simple
 cashier function that adds products to a cart and displays the total price.
 
