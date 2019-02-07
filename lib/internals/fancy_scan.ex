@@ -6,4 +6,11 @@ defmodule BlackFriday.FancyScan do
       with :ok <- BlackFriday.Checkout.scan(order.owner, product), do: order
     end
   end
+
+  # @spec ~>>(order :: %BlackFriday.Order{}, method :: :total | :checkout) :: Money.t
+  defmacro order ~>> method do
+    quote bind_quoted: [order: order, method: method] do
+      apply(BlackFriday.Checkout, method, [order.owner]).total
+    end
+  end
 end

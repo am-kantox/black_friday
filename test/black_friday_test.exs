@@ -88,6 +88,20 @@ defmodule BlackFridayTest do
     assert ^three_tea_price = BlackFriday.Checkout.checkout(bucket.owner).total
   end
 
+  test "Fancy Total", _context do
+    {:ok, order} = BlackFriday.Order.new()
+    three_tea_price = Money.new(:GBP, "6.22")
+
+    total =
+      order
+      <<~ BlackFriday.Product.find("GR1")
+      <<~ BlackFriday.Product.find("GR1")
+      <<~ BlackFriday.Product.find("GR1")
+      ~>> :checkout
+
+    assert three_tea_price == total
+  end
+
   test "Test Several Carts (concurrent)", _context do
     # pending
   end
