@@ -12,13 +12,22 @@ defmodule BlackFriday.Rule.ManyAreCheap do
         items: [%BlackFriday.Product{price: price} | _] = items,
         total: total
       })
-      when length(items) > 3 do
+      when length(items) == 4 do
     discount =
       price
       |> Money.mult!(length(items))
       |> Money.mult!(Decimal.div(1, 3))
 
     Money.round(Money.sub!(total, discount))
+  end
+
+  @impl true
+  def apply!(%BlackFriday.Order{
+        items: [%BlackFriday.Product{price: price} | _] = items,
+        total: total
+      })
+      when length(items) > 4 do
+    Money.round(Money.sub!(total, Money.mult!(price, Decimal.div(1, 3))))
   end
 
   @impl true

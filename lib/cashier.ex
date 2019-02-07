@@ -16,8 +16,11 @@ defmodule BlackFriday.Cashier do
   end
 
   @doc false
+  def order!(),
+    do: with({:ok, pid} <- checkout!(), do: {:ok, BlackFriday.Checkout.order(pid)})
+
+  @doc false
   @impl true
-  def init(opts) do
-    DynamicSupervisor.init(max_children: 1_000, strategy: :one_for_one, extra_arguments: opts)
-  end
+  def init(opts),
+    do: DynamicSupervisor.init(max_children: 1_000, strategy: :one_for_one, extra_arguments: opts)
 end

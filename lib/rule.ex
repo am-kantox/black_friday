@@ -44,7 +44,7 @@ defmodule BlackFriday.Rule do
   Performs a reduce operation on the order, calculating total
   """
   @spec reduce(order :: BlackFriday.Order.t()) :: Money.t()
-  def reduce(%BlackFriday.Order{items: items}) do
+  def reduce(%BlackFriday.Order{owner: owner, items: items}) do
     unknown_rules =
       with [{me, _, _} | _] <- Application.started_applications(),
            {:ok, modules} <- :application.get_key(me, :modules),
@@ -58,7 +58,7 @@ defmodule BlackFriday.Rule do
 
     Enum.reduce(
       items,
-      %BlackFriday.Order{},
+      %BlackFriday.Order{owner: owner},
       fn %BlackFriday.Product{code: code} = item,
          %BlackFriday.Order{items: items, total: total} = order ->
         code

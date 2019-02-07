@@ -9,6 +9,10 @@ defmodule BlackFriday.Checkout do
 
   # TODO Implement Collectable for %BlackFriday.Order{} to use in comprehensions
 
+  @doc "Returns the order behind this process"
+  @spec order(pid :: pid()) :: O.t()
+  def order(pid), do: GenServer.call(pid, :order)
+
   @doc "Scans the item in the cart, given product instance"
   @spec scan(pid :: pid(), product :: P.t() | binary()) :: O.t()
   def scan(pid, %P{} = product),
@@ -36,8 +40,14 @@ defmodule BlackFriday.Checkout do
 
   @doc false
   @impl true
-  def init(%O{}) do
-    {:ok, %O{}}
+  def init(%O{} = order) do
+    {:ok, %O{order | owner: self()}}
+  end
+
+  @doc false
+  @impl true
+  def handle_call(:order, _from, %O{} = state) do
+    {:reply, state, state}
   end
 
   @doc false
